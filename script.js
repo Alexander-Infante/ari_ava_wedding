@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Updated to use CloudFront URL
     const cloudFrontUrl = "https://diatlakdpp23f.cloudfront.net/";
 
     fetch(cloudFrontUrl)
@@ -17,10 +16,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     container.className = "image-container";
 
                     const img = document.createElement("img");
-                    img.src = cloudFrontUrl + key;
+                    img.src = ''; // Initially, src is empty
+                    img.dataset.src = cloudFrontUrl + key; // Actual image URL in data-src
+                    img.className = 'lazy'; // Add a class to denote lazy loading
                     container.appendChild(img);
+
                     img.onclick = function() {
-                        openModal(this.src);
+                        openModal(this.dataset.src);
                     };
 
                     document.getElementById("gallery").appendChild(container);
@@ -33,6 +35,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 //     link.className = "pdf-link";
                 //     document.getElementById("gallery").appendChild(link);
                 // }
+            }
+
+            // Implement lazy loading
+            let lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+
+            if ("IntersectionObserver" in window) {
+                let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            let lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src;
+                            lazyImage.classList.remove("lazy");
+                            lazyImageObserver.unobserve(lazyImage);
+                        }
+                    });
+                });
+
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImageObserver.observe(lazyImage);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver support
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImage.src = lazyImage.dataset.src;
+                });
             }
         })
         .catch(error => console.log("Error fetching and parsing data:", error));
