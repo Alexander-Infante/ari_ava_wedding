@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const bucketUrl = "https://ariana-ava-wedding-2023.s3.amazonaws.com/";
+    // Updated to use CloudFront URL
+    const cloudFrontUrl = "https://diatlakdpp23f.cloudfront.net/";
 
-    fetch(bucketUrl)
+    fetch(cloudFrontUrl)
         .then(response => response.text())
         .then(data => {
             const parser = new DOMParser();
@@ -16,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     container.className = "image-container";
 
                     const img = document.createElement("img");
-                    img.src = bucketUrl + key;
+                    img.src = cloudFrontUrl + key;
                     container.appendChild(img);
                     img.onclick = function() {
                         openModal(this.src);
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // TODO PDF
                 // else if (key.endsWith(".pdf")) {
                 //     const link = document.createElement("a");
-                //     link.href = bucketUrl + key;
+                //     link.href = cloudFrontUrl + key;
                 //     link.textContent = "PDF: " + key;
                 //     link.className = "pdf-link";
                 //     document.getElementById("gallery").appendChild(link);
